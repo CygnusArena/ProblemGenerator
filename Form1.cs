@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO.Compression;
 using System.Windows.Forms;
 
 namespace ProblemGenerator
@@ -8,24 +9,27 @@ namespace ProblemGenerator
         #region GlobalData
 
         private string folderName = @"C:\ProblemMake";
+        private string pbName;
+        private int totalPoints;
+        private int testNumber;
+        private string pPerTest;
+        private string pathString;
+        private string zipPath;
+        private string testPath;
+        private bool zipActive = false;
 
         #endregion GlobalData
 
         public Form1()
         {
             InitializeComponent();
+            if(!zipActive)
+                button2.Enabled = false;
         }
 
-        /// <summary>
-        /// Generates the files, and init.json
-        /// </summary>
-        private void generate()
+        private void dataInit()
         {
-
-            //Getting data 
-            string pbName = textBox1.Text;
-            int totalPoints;
-            int testNumber;
+            pbName = textBox1.Text;
             bool result;
 
             //Data validation
@@ -43,10 +47,29 @@ namespace ProblemGenerator
                 return;
             }
 
-            string pPerTest = (totalPoints / testNumber).ToString();
+            if (zipActive)
+            {
+                textBox1.Enabled = false;
+                textBox2.Enabled = false;
+                textBox3.Enabled = false;
+            }
+            else
+                button2.Enabled = false;
+            pPerTest = (totalPoints / testNumber).ToString();
 
-            string pathString = System.IO.Path.Combine(folderName, pbName);
-            System.IO.Directory.CreateDirectory(pathString);
+            pathString = System.IO.Path.Combine(folderName, pbName);
+            zipPath = System.IO.Path.Combine(pathString, "data.zip");
+            testPath = pathString + "/tests/";
+        }
+
+        /// <summary>
+        /// Generates the files, and init.json
+        /// </summary>
+        private void generate()
+        {
+
+            //Init data 
+            dataInit();
 
             string init = "{\"archive\":\"data.zip\",\"test_cases\":[";
 
@@ -55,9 +78,11 @@ namespace ProblemGenerator
                 string inFile = i.ToString() + "-" + pbName + ".in";
                 string okFile = i.ToString() + "-" + pbName + ".ok";
 
+                System.IO.Directory.CreateDirectory(testPath);
+
                 //File Make
-                string inPathString = System.IO.Path.Combine(pathString, inFile);
-                string okPathString = System.IO.Path.Combine(pathString, okFile);
+                string inPathString = System.IO.Path.Combine(testPath, inFile);
+                string okPathString = System.IO.Path.Combine(testPath, okFile);
 
                 System.IO.File.Create(inPathString);
                 System.IO.File.Create(okPathString);
@@ -78,6 +103,14 @@ namespace ProblemGenerator
             MessageBox.Show("Done!");
         }
 
+        public void zip()
+        {
+            ZipFile.CreateFromDirectory(testPath, zipPath);
+            textBox1.Enabled = true;
+            textBox2.Enabled = true;
+            textBox3.Enabled = true;
+        }
+
         /// <summary>
         /// The button is clicked.
         /// </summary>
@@ -86,6 +119,11 @@ namespace ProblemGenerator
         private void button1_Click(object sender, EventArgs e)
         {
             generate();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            zip();
         }
     }
 }
