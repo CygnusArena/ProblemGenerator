@@ -52,6 +52,7 @@ namespace ProblemGenerator
                 textBox1.Enabled = false;
                 textBox2.Enabled = false;
                 textBox3.Enabled = false;
+                button1.Enabled = false;
             }
             else
                 button2.Enabled = false;
@@ -100,15 +101,23 @@ namespace ProblemGenerator
             init += "]}";
             System.IO.File.WriteAllText(System.IO.Path.Combine(pathString, "init.json"), init);
 
-            MessageBox.Show("Done!");
+            MessageBox.Show("Done!\nGenerated under " + pathString);
         }
 
         public void zip()
         {
-            ZipFile.CreateFromDirectory(testPath, zipPath);
+            try {
+                ZipFile.CreateFromDirectory(testPath, zipPath);
+            }catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+                return;
+            }
+            button1.Enabled = true;
             textBox1.Enabled = true;
             textBox2.Enabled = true;
             textBox3.Enabled = true;
+            MessageBox.Show("Done!\nGenerated under " + zipPath);
         }
 
         /// <summary>
