@@ -23,10 +23,13 @@ namespace ProblemGenerator
         public Form1()
         {
             InitializeComponent();
-            if(!zipActive)
+            if (!zipActive)
                 button2.Enabled = false;
         }
 
+        /// <summary>
+        /// Init the data.
+        /// </summary>
         private void dataInit()
         {
             pbName = textBox1.Text;
@@ -68,8 +71,7 @@ namespace ProblemGenerator
         /// </summary>
         private void generate()
         {
-
-            //Init data 
+            //Init data
             dataInit();
 
             string init = "{\"archive\":\"data.zip\",\"test_cases\":[";
@@ -104,11 +106,16 @@ namespace ProblemGenerator
             MessageBox.Show("Done!\nGenerated under " + pathString);
         }
 
+        /// <summary>
+        /// Zip the tests
+        /// </summary>
         public void zip()
         {
-            try {
+            try
+            {
                 ZipFile.CreateFromDirectory(testPath, zipPath);
-            }catch (Exception e)
+            }
+            catch (Exception e)
             {
                 MessageBox.Show(e.ToString());
                 return;
@@ -121,7 +128,7 @@ namespace ProblemGenerator
         }
 
         /// <summary>
-        /// The button is clicked.
+        /// The generate button is clicked.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -130,6 +137,11 @@ namespace ProblemGenerator
             generate();
         }
 
+        /// <summary>
+        /// The zip button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
             zip();
