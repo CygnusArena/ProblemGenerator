@@ -7,8 +7,8 @@
     <ProjectGuid>{6F0FBFA3-2EF3-44DD-9BCB-320BCB34DD79}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ProblemPreparation</RootNamespace>
-    <AssemblyName>ProblemPreparation</AssemblyName>
+    <RootNamespace>ProblemGenerator</RootNamespace>
+    <AssemblyName>ProblemGenerator</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
