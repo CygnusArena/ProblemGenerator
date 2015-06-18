@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.IO.Compression;
 using System.Windows.Forms;
 
@@ -9,15 +10,15 @@ namespace ProblemGenerator
         #region GlobalData
 
         private string folderName = @"C:\ProblemMake";
-        private string pbName;
-        private int totalPoints;
-        private int testNumber;
-        private string pPerTest;
+        private FileStream fs;
         private string pathString;
-        private string zipPath;
+        private string pbName;
+        private string pPerTest;
+        private int testNumber;
         private string testPath;
+        private int totalPoints;
         private bool zipActive = true;
-        private System.IO.FileStream fs;
+        private string zipPath;
 
         #endregion GlobalData
 
@@ -26,6 +27,48 @@ namespace ProblemGenerator
             InitializeComponent();
             if (!zipActive)
                 button2.Enabled = false;
+        }
+
+        /// <summary>
+        /// Zip the tests
+        /// </summary>
+        public void zip()
+        {
+            try
+            {
+                File.Delete(zipPath);
+                ZipFile.CreateFromDirectory(testPath, zipPath);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+                return;
+            }
+            button1.Enabled = true;
+            textBox1.Enabled = true;
+            textBox2.Enabled = true;
+            textBox3.Enabled = true;
+            MessageBox.Show("Done!\nGenerated under " + zipPath);
+        }
+
+        /// <summary>
+        /// The generate button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e)
+        {
+            generate();
+        }
+
+        /// <summary>
+        /// The zip button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button2_Click(object sender, EventArgs e)
+        {
+            zip();
         }
 
         /// <summary>
@@ -62,9 +105,18 @@ namespace ProblemGenerator
                 button2.Enabled = false;
             pPerTest = (totalPoints / testNumber).ToString();
 
-            pathString = System.IO.Path.Combine(folderName, pbName);
-            zipPath = System.IO.Path.Combine(pathString, "data.zip");
+            pathString = Path.Combine(folderName, pbName);
+            zipPath = Path.Combine(pathString, "data.zip");
             testPath = pathString + "/tests/";
+        }
+
+        private void fileCreate(string path)
+        {
+            if (!File.Exists(path))
+            {
+                fs = File.Create(path);
+                fs.Close();
+            }
         }
 
         /// <summary>
@@ -82,16 +134,14 @@ namespace ProblemGenerator
                 string inFile = i.ToString() + "-" + pbName + ".in";
                 string okFile = i.ToString() + "-" + pbName + ".ok";
 
-                System.IO.Directory.CreateDirectory(testPath);
+                Directory.CreateDirectory(testPath);
 
                 //File Make
-                string inPathString = System.IO.Path.Combine(testPath, inFile);
-                string okPathString = System.IO.Path.Combine(testPath, okFile);
+                string inPathString = Path.Combine(testPath, inFile);
+                string okPathString = Path.Combine(testPath, okFile);
 
-                fs = System.IO.File.Create(inPathString);
-                fs.Close();
-                fs = System.IO.File.Create(okPathString);
-                fs.Close();
+                fileCreate(inPathString);
+                fileCreate(okPathString);
 
                 //Init.json test add
                 init += "{\"in\": \"" + inFile + "\",";
@@ -104,50 +154,9 @@ namespace ProblemGenerator
 
             //Finish Init
             init += "]}";
-            System.IO.File.WriteAllText(System.IO.Path.Combine(pathString, "init.json"), init);
+            File.WriteAllText(System.IO.Path.Combine(pathString, "init.json"), init);
 
             MessageBox.Show("Done!\nGenerated under " + pathString);
-        }
-
-        /// <summary>
-        /// Zip the tests
-        /// </summary>
-        public void zip()
-        {
-            try
-            {
-                ZipFile.CreateFromDirectory(testPath, zipPath);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
-                return;
-            }
-            button1.Enabled = true;
-            textBox1.Enabled = true;
-            textBox2.Enabled = true;
-            textBox3.Enabled = true;
-            MessageBox.Show("Done!\nGenerated under " + zipPath);
-        }
-
-        /// <summary>
-        /// The generate button is clicked.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button1_Click(object sender, EventArgs e)
-        {
-            generate();
-        }
-
-        /// <summary>
-        /// The zip button is clicked.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button2_Click(object sender, EventArgs e)
-        {
-            zip();
         }
     }
 }
