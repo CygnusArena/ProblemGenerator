@@ -16,7 +16,8 @@ namespace ProblemGenerator
         private string pathString;
         private string zipPath;
         private string testPath;
-        private bool zipActive = false;
+        private bool zipActive = true;
+        private System.IO.FileStream fs;
 
         #endregion GlobalData
 
@@ -87,8 +88,10 @@ namespace ProblemGenerator
                 string inPathString = System.IO.Path.Combine(testPath, inFile);
                 string okPathString = System.IO.Path.Combine(testPath, okFile);
 
-                System.IO.File.Create(inPathString);
-                System.IO.File.Create(okPathString);
+                fs = System.IO.File.Create(inPathString);
+                fs.Close();
+                fs = System.IO.File.Create(okPathString);
+                fs.Close();
 
                 //Init.json test add
                 init += "{\"in\": \"" + inFile + "\",";
